@@ -39,3 +39,10 @@ export function matchRule(descriptionRaw: string, partyId: string | null, rules:
   }
   return null;
 }
+
+/** A reasonable starting "contains" pattern for a new rule — the longest alphabetic token, since bank descriptions bury the merchant name among reference numbers. Ops edits it before approving. */
+export function guessRulePattern(descriptionRaw: string): string {
+  const tokens = descriptionRaw.match(/[A-Za-z]{4,}/g);
+  if (!tokens || tokens.length === 0) return descriptionRaw.trim();
+  return tokens.reduce((longest, t) => (t.length > longest.length ? t : longest), tokens[0]);
+}

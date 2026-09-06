@@ -4,6 +4,19 @@ Records what the owner actually decided where BLUEPRINT.md leaves something open
 
 ---
 
+## 2026-09-06 · Slice 2 built and verified
+
+Built per BLUEPRINT.md §16 Slice 2: AI categorisation (`lib/ai/categorize.ts`, `claude-haiku-4-5` via `client.messages.parse` + `zodOutputFormat` structured outputs), the Inbox screen with rule-learning Approve action (`app/inbox`), and PDF statement parsing with a client-side confirmation table (`claude-sonnet-5`, `lib/ai/parsePdfStatement.ts`, `components/PdfImport.tsx`) before anything is committed. Model choices follow BLUEPRINT.md §12's tiering (cheap model for bulk categorisation, a more capable one for reading a scanned table) updated to current model IDs — haiku-4-5 is unchanged, sonnet-4-6 → sonnet-5.
+
+T4 verified:
+- **Rule-first, AI-second**: the CSV fixture's three rule-seeded patterns (RAZORPAY/GST/FACEBK) categorise via rules alone — 100% ≥ the 90% bar — before AI ever runs.
+- **Validate or reject, never guess**: `lib/ai/categorize.test.ts` (8 tests, `pnpm --filter @finance-os/web test`) exercises the zod schema against well-formed and malformed model outputs, and confirms `applyCategorisationResults` drops anything below the 0.8 confidence floor or naming a category that doesn't exist for that company.
+- **Rule learning, end to end**: imported an unmatched transaction ("ZOOM SUBSCRIPTION PAYMENT") → it queued to Inbox uncategorised → approved it with pattern "ZOOM" → confirmed exactly one `category_rule` row was created → imported a second, similar transaction ("ZOOM MONTHLY RENEWAL") → it auto-categorised via the new rule and the rule's `hit_count` incremented. Verified against the live dev DB, not just unit tests.
+
+**Known gap, stated plainly:** there is no Anthropic API key available in this build environment (`ant auth status` — no active credential, `ANTHROPIC_API_KEY` unset), so the *live* AI categorisation and PDF-parsing calls have not been exercised end-to-end against the real API — only their code paths (schema validation, the confidence/rejection logic, the no-key mock fallback that correctly leaves everything for the Inbox) are verified. Wiring a real key is a one-line `.env` change (`ANTHROPIC_API_KEY=...`) with no code change needed; re-verify the live path once a key is available.
+
+---
+
 ## 2026-09-06 · Slice 0/1 built and verified
 
 Built per BLUEPRINT.md §16 Slices 0-1, against local Postgres (see the infra decision below): pnpm monorepo (`apps/web` Next.js 15, `packages/finance-core`), the full §5 schema with RLS, the Setup wizard, generic CSV/XLSX statement import with dedupe + rule-engine categorisation, the Cash Today screen, and the daily 6pm cash message job (mocked WhatsApp channel).

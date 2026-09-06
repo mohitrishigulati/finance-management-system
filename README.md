@@ -11,7 +11,7 @@ Start here:
 - **`docs/DECISIONS.md`** — open questions raised while interrogating the blueprint, and what was decided; overrides the blueprint's defaults where the two disagree.
 - **`config/templates/`** — industry templates (JSON) that seed categories, rules, targets and revenue streams per company.
 
-Build proceeds slice by slice per `BLUEPRINT.md` Section 16, each ending with its acceptance test (Section 17) passing. **Slices 0-1 are done** — see the "Slice 0/1 built and verified" entry in `docs/DECISIONS.md`.
+Build proceeds slice by slice per `BLUEPRINT.md` Section 16, each ending with its acceptance test (Section 17) passing. **Slices 0-2 are done** — see the "Slice 0/1" and "Slice 2" entries in `docs/DECISIONS.md`. AI categorisation and PDF parsing (Slice 2) need `ANTHROPIC_API_KEY` set to actually call the model; without it they fall back to leaving transactions for the Inbox, which is what this build environment currently exercises (no key available here — see the "Known gap" note in `docs/DECISIONS.md`).
 
 ## Local development
 
@@ -27,6 +27,7 @@ pnpm db:migrate                       # applies supabase/migrations/*.sql + gran
 
 pnpm dev                              # apps/web on http://localhost:3000
 pnpm test:core                        # finance-core unit tests (T0)
+pnpm --filter @finance-os/web test    # AI categorisation guardrail tests (T4)
 
 pnpm db:seed:meera                    # seeds the Meera fixture (BLUEPRINT.md §18); prints a user_id
 MEERA_USER_ID=<printed-id> node tests/acceptance.mjs   # T1-T3, against the running dev server

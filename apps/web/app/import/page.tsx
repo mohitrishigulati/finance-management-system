@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getCurrentUserId } from "@/lib/session";
 import { withCompanyContext } from "@/lib/db";
 import { importStatementAction } from "./actions";
+import { PdfImport } from "@/components/PdfImport";
 
 export default async function ImportPage({
   searchParams,
@@ -61,9 +62,16 @@ export default async function ImportPage({
         </button>
       </form>
 
-      <a href="/cash-today" className="text-sm text-primary text-center">
-        Go to Cash Today →
-      </a>
+      <PdfImport accounts={accounts} />
+
+      <div className="flex justify-between text-sm">
+        <a href="/inbox" className="text-primary">
+          Review Inbox →
+        </a>
+        <a href="/cash-today" className="text-primary">
+          Go to Cash Today →
+        </a>
+      </div>
     </main>
   );
 }
