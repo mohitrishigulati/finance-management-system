@@ -1,0 +1,34 @@
+{
+  "slug": "coaching-services",
+  "label": "Coaching / Consulting / Training",
+  "has_inventory": false,
+  "revenue_streams": [
+    {"name": "Individual (prepaid)", "expected_payment_days": 0},
+    {"name": "Corporate (invoiced)", "expected_payment_days": 45}
+  ],
+  "owner_default_bucket": "direct",
+  "gross_margin_pct_typical": 90,
+  "targets": {
+    "runway_days": 60,
+    "ccc_days": 20,
+    "true_profit_pct": 10,
+    "direct_ler": 1.8,
+    "mgmt_ler": 6,
+    "rona_pct": 30
+  },
+  "category_seed": [
+    {"name": "Client fees", "group": "revenue"},
+    {"name": "Payment gateway fees", "group": "direct_nonlabour"},
+    {"name": "Meta Ads", "group": "opex"},
+    {"name": "Coach salaries", "group": "direct_labour"},
+    {"name": "Admin salaries", "group": "mgmt_labour"},
+    {"name": "GST payment", "group": "tax_gst"},
+    {"name": "Owner draw", "group": "owner_draw"}
+  ],
+  "rule_seed": [
+    {"match_type": "contains", "pattern": "RAZORPAY", "category": "Client fees"},
+    {"match_type": "contains", "pattern": "FACEBK", "category": "Meta Ads"},
+    {"match_type": "contains", "pattern": "GST", "category": "GST payment"}
+  ],
+  "reminder_register": "en"
+}
