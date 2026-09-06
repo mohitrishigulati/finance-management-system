@@ -1,0 +1,30 @@
+{
+  "name": "finance-os",
+  "private": true,
+  "version": "0.1.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  },
+  "scripts": {
+    "dev": "pnpm --filter @finance-os/web dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "test:core": "pnpm --filter @finance-os/finance-core test",
+    "db:migrate": "node scripts/migrate.mjs",
+    "db:seed:meera": "tsx scripts/seed-meera.ts"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "pg": "^8.23.0"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.23.1",
+    "playwright": "^1.63.0",
+    "tsx": "^4.23.13"
+  }
+}
