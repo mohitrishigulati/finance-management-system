@@ -14,8 +14,8 @@ Records what the owner actually decided where BLUEPRINT.md leaves something open
 
 Status legend: 🟡 open (needs an answer before the slice that touches it) · ✅ resolved (default taken, override here if wrong) · 🔵 accepted limitation (documented, not blocking).
 
-1. 🟡 **Authentication mechanism is unspecified.** The blueprint names two roles (Owner, Ops) but never says how they log in. Options: Supabase Auth with magic-link email, phone-OTP (matches the WhatsApp-first, low-patience Owner persona better than email), or both. **Needs an answer before Slice 1** (Setup wizard creates the first user).
-2. 🟡 **Solo owner = both roles.** The Meera fixture has an owner and one ops-equivalent (Ritu), but many pilot businesses will have a single person doing both. Setup should let one login hold both `owner` and `ops` roles rather than forcing two accounts. Taking this as the default unless told otherwise.
+1. ✅ **Authentication mechanism: Supabase Auth, phone OTP.** Matches the WhatsApp-first, low-patience Owner persona. `user.phone_whatsapp` doubles as the login identity; no separate email/password flow in v1.
+2. ✅ **Solo owner = both roles: allowed.** Setup lets one user hold both `owner` and `ops` roles (stored as a flag/array on `user`, not a forced second account) — matches the blueprint's own Meera example before she had Ritu.
 3. ✅ **Which industry templates ship in Slice 1 vs later.** The blueprint's own Slice 7 line ("remaining templates") implies not all six are needed up front. Default: build `coaching-services` (already scaffolded, matches the Meera fixture used by every acceptance test) and treat the other five as Slice 7 work, added once the loop is proven on one template.
 4. 🔵 **`avg_daily_outflow` owner-salary handling is binary, not prorated.** Documented in `FORMULAS.md` under "Known formula gaps." Default fix: use `max(0, market_salary − actual_draw_this_month)/30` instead of an all-or-nothing addition. Flagging here since it changes a number in every acceptance test if not applied consistently — will implement the corrected version in `finance-core` unless told to match the blueprint literally.
 5. 🔵 **Accrual/cash mismatch in True Profit.** Revenue is accrual (invoice date); non-labour direct costs and opex are cash/bank-category based. A large one-off annual payment (e.g. yearly software licence) will spike one month's numbers. Accepted as a documented v1 limitation, not a blocker — CCC and profit are read as trends, not single months, which the Scoreboard already emphasises.
@@ -24,4 +24,10 @@ Status legend: 🟡 open (needs an answer before the slice that touches it) · �
 8. 🔵 **Nightly compute concurrency.** Section 7 implies per-company queued jobs but doesn't say how overlapping runs (e.g. a manual "recompute" while the nightly cron is still running for the same company) are prevented. Default: a `company_id`-scoped advisory lock or a `kpi_snapshot` job-status row checked before starting a run.
 9. 🔵 **Labour costs are entered manually in v1** (no payroll import), so LER and true profit are only as fresh as the last manual update. Accepted per the blueprint's own SHOULD list; default: the Setup screen nudges Ops to confirm labour figures monthly rather than silently going stale.
 
-Open items (1) and (2) are the two worth a direct answer before Slice 1 starts; the rest have a stated default and only need a correction if the default is wrong.
+All items are now resolved or accepted as documented limitations. Slice 1 can start.
+
+---
+
+## 2026-09-06 · Auth and roles resolved
+
+**Decided:** Phone-OTP via Supabase Auth for all logins (`user.phone_whatsapp` is the identity — no email/password flow in v1). A single user account may hold both `owner` and `ops` roles simultaneously, so a solo founder does not need two accounts.
